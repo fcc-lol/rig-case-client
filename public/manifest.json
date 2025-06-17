@@ -1,0 +1,9 @@
+{
+  "short_name": "Rig Case Client",
+  "name": "Rig Case Client",
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
+
