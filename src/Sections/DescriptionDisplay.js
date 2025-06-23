@@ -15,13 +15,11 @@ const Container = styled.div`
 
 const Description = styled.div`
   font-size: 1rem;
-  text-align: justify;
-  text-justify: distribute;
   line-height: 1;
   color: #fff;
   font-family: "Courier New", Courier, monospace;
   font-weight: 600;
-  width: calc(100% - 2rem);
+  width: calc(100% - 1rem);
   text-transform: uppercase;
   word-spacing: 0.2em;
   letter-spacing: 0.1em;
