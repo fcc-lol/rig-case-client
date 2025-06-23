@@ -72,19 +72,12 @@ function App() {
   const isPausedRef = useRef(false);
 
   const captureAndAnalyze = useCallback(async () => {
-    console.log(
-      "captureAndAnalyze called, isPaused:",
-      isPausedRef.current,
-      "isProcessing:",
-      isProcessing
-    );
     if (
       !videoRef.current ||
       !canvasRef.current ||
       isProcessing ||
       isPausedRef.current
     ) {
-      console.log("captureAndAnalyze early return");
       return;
     }
 
@@ -103,7 +96,6 @@ function App() {
       // Convert to base64 with higher quality
       const imageData = canvas.toDataURL("image/jpeg", 0.9);
 
-      console.log("sending image to openai");
       // Send to OpenAI
       const response = await fetch("https://api.openai.com/v1/responses", {
         method: "POST",
@@ -162,20 +154,14 @@ function App() {
   }, [isProcessing]);
 
   const handleEmojiToggle = useCallback(() => {
-    console.log("handleEmojiToggle called, isPaused:", isPaused);
     // Clear existing timers
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     if (isPaused) {
-      console.log("Resuming - starting new analysis");
       // Resuming - start new timers and analysis, keep current emoji until new one loads
       timeoutRef.current = setTimeout(captureAndAnalyze, 500);
       intervalRef.current = setInterval(captureAndAnalyze, 5000);
-    } else {
-      console.log("Pausing - keeping current emoji");
-      // Pausing - keep the current emoji visible, just stop the analysis
-      // Don't clear currentEmoji here
     }
     setIsPaused(!isPaused);
     isPausedRef.current = !isPaused;
