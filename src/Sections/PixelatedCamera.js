@@ -24,7 +24,7 @@ const HiddenVideo = styled.video`
   height: 1px;
 `;
 
-function BottomLeftSection({ videoStream, error, loading, pixelSize = 0.1 }) {
+function PixelatedCamera({ videoStream, error, loading, pixelSize = 0.1 }) {
   const canvasRef = useRef(null);
   const videoRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -96,17 +96,11 @@ function BottomLeftSection({ videoStream, error, loading, pixelSize = 0.1 }) {
       };
 
       const handleCanPlay = () => {
-        console.log("Video can play, starting frame drawing");
         drawFrame();
-      };
-
-      const handlePlaying = () => {
-        console.log("Video is playing");
       };
 
       // Add event listeners
       videoElement.addEventListener("canplay", handleCanPlay);
-      videoElement.addEventListener("playing", handlePlaying);
 
       // Ensure video plays
       videoElement.play().catch(console.error);
@@ -115,7 +109,6 @@ function BottomLeftSection({ videoStream, error, loading, pixelSize = 0.1 }) {
       return () => {
         if (videoElement) {
           videoElement.removeEventListener("canplay", handleCanPlay);
-          videoElement.removeEventListener("playing", handlePlaying);
         }
       };
     }
@@ -135,4 +128,4 @@ function BottomLeftSection({ videoStream, error, loading, pixelSize = 0.1 }) {
   );
 }
 
-export default BottomLeftSection;
+export default PixelatedCamera;
