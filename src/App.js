@@ -7,8 +7,21 @@ import EmojiDisplay from "./Sections/EmojiDisplay";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 
-const openaiApiKey =
-  new URLSearchParams(window.location.search).get("openAiApiKey") || "";
+// Get API key from URL params first, then localStorage, otherwise empty string
+const getApiKey = () => {
+  const urlApiKey = new URLSearchParams(window.location.search).get(
+    "openAiApiKey"
+  );
+  if (urlApiKey) {
+    // If we got it from URL, save it to localStorage for future use
+    localStorage.setItem("openaiApiKey", urlApiKey);
+    return urlApiKey;
+  }
+  // Try to get from localStorage
+  return localStorage.getItem("openaiApiKey") || "";
+};
+
+let openaiApiKey = getApiKey();
 
 const Response = z.object({
   emoji: z.string(),
@@ -71,12 +84,24 @@ function App() {
   const canvasRef = useRef(null);
   const isPausedRef = useRef(false);
 
+  // Prompt for API key if not available
+  useEffect(() => {
+    if (!openaiApiKey) {
+      const apiKey = prompt("Please enter your OpenAI API key:");
+      if (apiKey) {
+        openaiApiKey = apiKey.trim();
+        localStorage.setItem("openaiApiKey", openaiApiKey);
+      }
+    }
+  }, []);
+
   const captureAndAnalyze = useCallback(async () => {
     if (
       !videoRef.current ||
       !canvasRef.current ||
       isProcessing ||
-      isPausedRef.current
+      isPausedRef.current ||
+      !openaiApiKey
     ) {
       return;
     }
