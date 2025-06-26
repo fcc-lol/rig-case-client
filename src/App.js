@@ -124,7 +124,7 @@ function App() {
   const [currentDescription, setCurrentDescription] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [alignmentMode] = useState(true);
+  const [alignmentMode] = useState(isAlignmentMode());
   const intervalRef = useRef(null);
   const timeoutRef = useRef(null);
   const videoRef = useRef(null);
