@@ -95,8 +95,8 @@ const PlayButton = styled.div`
   justify-content: center;
   cursor: pointer;
   z-index: 10;
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(5px);
+  border: 2px solid rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
 
   &:active {
