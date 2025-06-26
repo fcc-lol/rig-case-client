@@ -198,6 +198,12 @@ function App() {
   }, [isPaused, captureAndAnalyze]);
 
   useEffect(() => {
+    // Don't start camera if in alignment mode
+    if (alignmentMode) {
+      setLoading(false);
+      return;
+    }
+
     let stream = null;
     let mounted = true;
 
@@ -234,7 +240,7 @@ function App() {
         tracks.forEach((track) => track.stop());
       }
     };
-  }, []);
+  }, [alignmentMode]);
 
   useEffect(() => {
     if (!videoStream) return;
