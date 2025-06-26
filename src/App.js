@@ -44,6 +44,10 @@ const Section = styled.div`
   position: absolute;
   border-radius: 32px;
   overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  opacity: ${(props) => (props.$isPaused ? 0.25 : 1)};
+  background-color: #000000;
 `;
 
 const TopSection = styled(Section)`
@@ -51,8 +55,7 @@ const TopSection = styled(Section)`
   left: 12px;
   width: 392px;
   height: 318px;
-  background-color: ${(props) =>
-    props.$alignmentMode ? "#ff6b6b" : "transparent"};
+  background-color: ${(props) => props.$alignmentMode && "#ff6b6b"};
 `;
 
 const MiddleSection = styled(Section)`
@@ -60,8 +63,7 @@ const MiddleSection = styled(Section)`
   left: 12px;
   width: 392px;
   height: 188px;
-  background-color: ${(props) =>
-    props.$alignmentMode ? "#4ecdc4" : "transparent"};
+  background-color: ${(props) => props.$alignmentMode && "#4ecdc4"};
 `;
 
 const BottomLeftSection = styled(Section)`
@@ -69,8 +71,7 @@ const BottomLeftSection = styled(Section)`
   left: 12px;
   width: 150px;
   height: 164px;
-  background-color: ${(props) =>
-    props.$alignmentMode ? "#45b7d1" : "transparent"};
+  background-color: ${(props) => props.$alignmentMode && "#45b7d1"};
 `;
 
 const BottomRightSection = styled(Section)`
@@ -78,8 +79,38 @@ const BottomRightSection = styled(Section)`
   left: 252px;
   width: 150px;
   height: 164px;
-  background-color: ${(props) =>
-    props.$alignmentMode ? "#96ceb4" : "transparent"};
+  background-color: ${(props) => props.$alignmentMode && "#96ceb4"};
+`;
+
+const PlayButton = styled.div`
+  position: absolute;
+  top: 127px;
+  left: 168px;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.9);
+  }
+`;
+
+const PlayButtonIcon = styled.div`
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 16px 0 16px 28px;
+  border-color: transparent transparent transparent #ffffff;
+  margin-left: 6px;
 `;
 
 function App() {
@@ -144,7 +175,7 @@ function App() {
               content: [
                 {
                   type: "input_text",
-                  text: "Look at this image and respond with a single emoji that best represents what you see and a short description of what you see (in the style of a observing radio transmission, max 8 words, with no trailing period)"
+                  text: "Look at this image and respond with a single emoji that best represents what you see and a short description of what you see (in the style of a observing radio transmission, max 10 words, with no trailing period)"
                 },
                 {
                   type: "input_image",
@@ -185,7 +216,7 @@ function App() {
     }
   }, [isProcessing]);
 
-  const handleEmojiToggle = useCallback(() => {
+  const handlePauseToggle = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -285,18 +316,26 @@ function App() {
 
   return (
     <Page $alignmentMode={alignmentMode}>
-      <TopSection $alignmentMode={alignmentMode}>
+      <TopSection
+        $alignmentMode={alignmentMode}
+        $isPaused={isPaused}
+        onClick={handlePauseToggle}
+      >
         {!alignmentMode && (
           <Camera
             videoStream={videoStream}
             error={error}
             loading={loading}
             isPaused={isPaused}
-            onToggle={handleEmojiToggle}
+            onToggle={handlePauseToggle}
           />
         )}
       </TopSection>
-      <MiddleSection $alignmentMode={alignmentMode}>
+      <MiddleSection
+        $alignmentMode={alignmentMode}
+        $isPaused={isPaused}
+        onClick={handlePauseToggle}
+      >
         {!alignmentMode && (
           <ColorSpectrum
             videoStream={videoStream}
@@ -306,12 +345,25 @@ function App() {
           />
         )}
       </MiddleSection>
-      <BottomLeftSection $alignmentMode={alignmentMode}>
+      <BottomLeftSection
+        $alignmentMode={alignmentMode}
+        $isPaused={isPaused}
+        onClick={handlePauseToggle}
+      >
         {!alignmentMode && <Description description={currentDescription} />}
       </BottomLeftSection>
-      <BottomRightSection $alignmentMode={alignmentMode}>
+      <BottomRightSection
+        $alignmentMode={alignmentMode}
+        $isPaused={isPaused}
+        onClick={handlePauseToggle}
+      >
         {!alignmentMode && <Emoji emoji={currentEmoji} />}
       </BottomRightSection>
+      {!alignmentMode && isPaused && !loading && !error && (
+        <PlayButton onClick={handlePauseToggle}>
+          <PlayButtonIcon />
+        </PlayButton>
+      )}
       {!alignmentMode && (
         <>
           <video

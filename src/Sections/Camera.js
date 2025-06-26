@@ -26,45 +26,6 @@ const ErrorMessage = styled.div`
   font-family: Arial, sans-serif;
 `;
 
-const PlayButton = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 10;
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-
-  &:before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 16px 0 16px 28px;
-    border-color: transparent transparent transparent #ffffff;
-    margin-left: 6px;
-  }
-
-  &.paused:before {
-    content: "";
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 16px 0 16px 28px;
-    border-color: transparent transparent transparent #ffffff;
-    margin-left: 6px;
-  }
-`;
-
 function Camera({ videoStream, error, loading, isPaused, onToggle }) {
   const videoRef = useRef(null);
 
@@ -101,12 +62,6 @@ function Camera({ videoStream, error, loading, isPaused, onToggle }) {
       />
       {loading && <Spinner />}
       {error && <ErrorMessage>{error}</ErrorMessage>}
-      {!loading && !error && isPaused && (
-        <PlayButton
-          className={isPaused ? "paused" : ""}
-          onClick={handleClick}
-        />
-      )}
     </Container>
   );
 }
