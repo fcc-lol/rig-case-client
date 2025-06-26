@@ -1,24 +1,27 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import styled from "styled-components";
-import TopSection from "./Sections/TopSection";
+import Camera from "./Sections/Camera";
 import ColorSpectrum from "./Sections/ColorSpectrum";
-import DescriptionDisplay from "./Sections/DescriptionDisplay";
-import EmojiDisplay from "./Sections/EmojiDisplay";
+import Description from "./Sections/Description";
+import Emoji from "./Sections/Emoji";
 import { zodTextFormat } from "openai/helpers/zod";
 import { z } from "zod";
 
-// Get API key from URL params first, then localStorage, otherwise empty string
 const getApiKey = () => {
   const urlApiKey = new URLSearchParams(window.location.search).get(
     "openAiApiKey"
   );
   if (urlApiKey) {
-    // If we got it from URL, save it to localStorage for future use
     localStorage.setItem("openaiApiKey", urlApiKey);
     return urlApiKey;
   }
-  // Try to get from localStorage
   return localStorage.getItem("openaiApiKey") || "";
+};
+
+const isAlignmentMode = () => {
+  return (
+    new URLSearchParams(window.location.search).get("alignmentMode") === "true"
+  );
 };
 
 let openaiApiKey = getApiKey();
@@ -33,7 +36,8 @@ const Page = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #000000;
+  background-color: ${(props) =>
+    props.$alignmentMode ? "#ffffff" : "#000000"};
 `;
 
 const Section = styled.div`
@@ -42,32 +46,40 @@ const Section = styled.div`
   overflow: hidden;
 `;
 
-const TopSectionWrapper = styled(Section)`
+const TopSection = styled(Section)`
   top: 8px;
   left: 12px;
   width: 392px;
   height: 318px;
+  background-color: ${(props) =>
+    props.$alignmentMode ? "#ff6b6b" : "transparent"};
 `;
 
-const MiddleSectionWrapper = styled(Section)`
+const MiddleSection = styled(Section)`
   top: 406px;
   left: 12px;
   width: 392px;
   height: 188px;
+  background-color: ${(props) =>
+    props.$alignmentMode ? "#4ecdc4" : "transparent"};
 `;
 
-const BottomLeftSectionWrapper = styled(Section)`
+const BottomLeftSection = styled(Section)`
   top: 672px;
   left: 12px;
   width: 150px;
   height: 164px;
+  background-color: ${(props) =>
+    props.$alignmentMode ? "#45b7d1" : "transparent"};
 `;
 
-const BottomRightSectionWrapper = styled(Section)`
+const BottomRightSection = styled(Section)`
   top: 672px;
   left: 252px;
   width: 150px;
   height: 164px;
+  background-color: ${(props) =>
+    props.$alignmentMode ? "#96ceb4" : "transparent"};
 `;
 
 function App() {
@@ -78,13 +90,13 @@ function App() {
   const [currentDescription, setCurrentDescription] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [alignmentMode] = useState(isAlignmentMode());
   const intervalRef = useRef(null);
   const timeoutRef = useRef(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const isPausedRef = useRef(false);
 
-  // Prompt for API key if not available
   useEffect(() => {
     if (!openaiApiKey) {
       const apiKey = prompt("Please enter your OpenAI API key:");
@@ -109,19 +121,15 @@ function App() {
     try {
       setIsProcessing(true);
 
-      // Capture frame from video
       const canvas = canvasRef.current;
       const ctx = canvas.getContext("2d");
       canvas.width = 256;
       canvas.height = 256;
 
-      // Draw the current video frame to canvas
       ctx.drawImage(videoRef.current, 0, 0, 256, 256);
 
-      // Convert to base64 with higher quality
       const imageData = canvas.toDataURL("image/jpeg", 0.9);
 
-      // Send to OpenAI
       const response = await fetch("https://api.openai.com/v1/responses", {
         method: "POST",
         headers: {
@@ -164,7 +172,6 @@ function App() {
       const emoji = parsedResponse.emoji;
       const description = parsedResponse.description;
 
-      // Only update emoji if we're not paused
       if (!isPausedRef.current) {
         if (emoji) {
           setCurrentEmoji(emoji);
@@ -179,12 +186,10 @@ function App() {
   }, [isProcessing]);
 
   const handleEmojiToggle = useCallback(() => {
-    // Clear existing timers
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     if (isPaused) {
-      // Resuming - start new timers and analysis, keep current emoji until new one loads
       timeoutRef.current = setTimeout(captureAndAnalyze, 500);
       intervalRef.current = setInterval(captureAndAnalyze, 5000);
     }
@@ -222,7 +227,6 @@ function App() {
 
     startCamera();
 
-    // Cleanup function to stop camera when component unmounts
     return () => {
       mounted = false;
       if (stream) {
@@ -232,11 +236,9 @@ function App() {
     };
   }, []);
 
-  // Set up video analysis when videoStream is available
   useEffect(() => {
     if (!videoStream) return;
 
-    // Set up video element
     const setupVideo = async () => {
       if (videoRef.current) {
         try {
@@ -253,10 +255,7 @@ function App() {
     const videoElement = videoRef.current;
     setupVideo();
 
-    // Start periodic analysis every 5 seconds
     intervalRef.current = setInterval(captureAndAnalyze, 5000);
-
-    // Initial analysis after a short delay
     timeoutRef.current = setTimeout(captureAndAnalyze, 2000);
 
     return () => {
@@ -268,7 +267,6 @@ function App() {
     };
   }, [videoStream, captureAndAnalyze]);
 
-  // Control hidden video play/pause based on isPaused state
   useEffect(() => {
     if (videoRef.current && videoStream) {
       if (isPaused) {
@@ -280,53 +278,61 @@ function App() {
   }, [isPaused, videoStream]);
 
   return (
-    <Page>
-      <TopSectionWrapper>
-        <TopSection
-          videoStream={videoStream}
-          error={error}
-          loading={loading}
-          isPaused={isPaused}
-          onToggle={handleEmojiToggle}
-        />
-      </TopSectionWrapper>
-      <MiddleSectionWrapper>
-        <ColorSpectrum
-          videoStream={videoStream}
-          error={error}
-          loading={loading}
-          isPaused={isPaused}
-        />
-      </MiddleSectionWrapper>
-      <BottomLeftSectionWrapper>
-        <DescriptionDisplay description={currentDescription} />
-      </BottomLeftSectionWrapper>
-      <BottomRightSectionWrapper>
-        <EmojiDisplay emoji={currentEmoji} />
-      </BottomRightSectionWrapper>
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        style={{
-          position: "absolute",
-          top: "-1000px",
-          left: "-1000px",
-          width: "224px",
-          height: "224px"
-        }}
-      />
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: "absolute",
-          top: "-1000px",
-          left: "-1000px",
-          width: "256px",
-          height: "256px"
-        }}
-      />
+    <Page $alignmentMode={alignmentMode}>
+      <TopSection $alignmentMode={alignmentMode}>
+        {!alignmentMode && (
+          <Camera
+            videoStream={videoStream}
+            error={error}
+            loading={loading}
+            isPaused={isPaused}
+            onToggle={handleEmojiToggle}
+          />
+        )}
+      </TopSection>
+      <MiddleSection $alignmentMode={alignmentMode}>
+        {!alignmentMode && (
+          <ColorSpectrum
+            videoStream={videoStream}
+            error={error}
+            loading={loading}
+            isPaused={isPaused}
+          />
+        )}
+      </MiddleSection>
+      <BottomLeftSection $alignmentMode={alignmentMode}>
+        {!alignmentMode && <Description description={currentDescription} />}
+      </BottomLeftSection>
+      <BottomRightSection $alignmentMode={alignmentMode}>
+        {!alignmentMode && <Emoji emoji={currentEmoji} />}
+      </BottomRightSection>
+      {!alignmentMode && (
+        <>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            style={{
+              position: "absolute",
+              top: "-1000px",
+              left: "-1000px",
+              width: "224px",
+              height: "224px"
+            }}
+          />
+          <canvas
+            ref={canvasRef}
+            style={{
+              position: "absolute",
+              top: "-1000px",
+              left: "-1000px",
+              width: "256px",
+              height: "256px"
+            }}
+          />
+        </>
+      )}
     </Page>
   );
 }

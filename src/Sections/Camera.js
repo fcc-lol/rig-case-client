@@ -65,7 +65,7 @@ const PlayButton = styled.div`
   }
 `;
 
-function TopSection({ videoStream, error, loading, isPaused, onToggle }) {
+function Camera({ videoStream, error, loading, isPaused, onToggle }) {
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -111,4 +111,4 @@ function TopSection({ videoStream, error, loading, isPaused, onToggle }) {
   );
 }
 
-export default TopSection;
+export default Camera;

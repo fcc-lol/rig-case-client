@@ -13,14 +13,18 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Emoji = styled.div`
+const EmojiDisplay = styled.div`
   font-size: 5rem;
   text-align: center;
   line-height: 1;
 `;
 
-function EmojiDisplay({ emoji }) {
-  return <Container>{emoji ? <Emoji>{emoji}</Emoji> : <Spinner />}</Container>;
+function Emoji({ emoji }) {
+  return (
+    <Container>
+      {emoji ? <EmojiDisplay>{emoji}</EmojiDisplay> : <Spinner />}
+    </Container>
+  );
 }
 
-export default EmojiDisplay;
+export default Emoji;

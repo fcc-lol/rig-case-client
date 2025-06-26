@@ -13,7 +13,7 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Description = styled.div`
+const DescriptionDisplay = styled.div`
   font-size: 1rem;
   line-height: 1;
   color: #fff;
@@ -25,12 +25,16 @@ const Description = styled.div`
   letter-spacing: 0.1em;
 `;
 
-function EmojiDisplay({ description }) {
+function Description({ description }) {
   return (
     <Container>
-      {description ? <Description>{description}</Description> : <Spinner />}
+      {description ? (
+        <DescriptionDisplay>{description}</DescriptionDisplay>
+      ) : (
+        <Spinner />
+      )}
     </Container>
   );
 }
 
-export default EmojiDisplay;
+export default Description;
