@@ -48,44 +48,47 @@ const Section = styled.div`
   transition: opacity 0.2s ease;
   opacity: ${(props) => (props.$isPaused ? 0.25 : 1)};
   background-color: #000000;
+  -webkit-tap-highlight-color: transparent;
 `;
 
 const TopSection = styled(Section)`
-  top: 8px;
-  left: 12px;
-  width: 392px;
-  height: 318px;
+  top: 2px;
+  left: 8px;
+  width: 396px;
+  height: 320px;
   background-color: ${(props) => props.$alignmentMode && "#ff6b6b"};
 `;
 
 const MiddleSection = styled(Section)`
-  top: 406px;
-  left: 12px;
-  width: 392px;
+  top: 402px;
+  left: 8px;
+  width: 396px;
   height: 188px;
   background-color: ${(props) => props.$alignmentMode && "#4ecdc4"};
 `;
 
 const BottomLeftSection = styled(Section)`
-  top: 672px;
-  left: 12px;
-  width: 150px;
-  height: 164px;
+  top: 668px;
+  left: 8px;
+  width: 154px;
+  height: 156px;
+  padding-bottom: 8px;
   background-color: ${(props) => props.$alignmentMode && "#45b7d1"};
 `;
 
 const BottomRightSection = styled(Section)`
-  top: 672px;
+  top: 670px;
   left: 252px;
-  width: 150px;
-  height: 164px;
-  background-color: ${(props) => props.$alignmentMode && "#96ceb4"};
+  width: 154px;
+  height: 156px;
+  padding-bottom: 8px;
+  background-color: ${(props) => props.$alignmentMode && "#45b7d1"};
 `;
 
 const PlayButton = styled.div`
   position: absolute;
   top: 127px;
-  left: 168px;
+  left: 167px;
   width: 80px;
   height: 80px;
   background: rgba(255, 255, 255, 0.2);
