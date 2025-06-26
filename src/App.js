@@ -78,7 +78,7 @@ const BottomLeftSection = styled(Section)`
 
 const BottomRightSection = styled(Section)`
   top: 670px;
-  left: 252px;
+  left: 250px;
   width: 154px;
   height: 156px;
   padding-bottom: 8px;
