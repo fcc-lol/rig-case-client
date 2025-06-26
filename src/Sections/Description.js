@@ -20,7 +20,7 @@ const DescriptionDisplay = styled.div`
   font-family: "Courier New", Courier, monospace;
   font-weight: 600;
   width: calc(100% - 3rem);
-  height: calc(100% - 3.5rem);
+  height: calc(100% - 3rem);
   text-transform: uppercase;
   word-spacing: 0.2em;
   letter-spacing: 0.1em;
